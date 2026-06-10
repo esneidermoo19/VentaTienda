@@ -1,0 +1,1234 @@
+#:import VERDE_PRINCIPAL theme.VERDE_PRINCIPAL
+#:import VERDE_CLARO theme.VERDE_CLARO
+#:import VERDE_SUAVE theme.VERDE_SUAVE
+#:import MORADO theme.MORADO
+#:import MORADO_SUAVE theme.MORADO_SUAVE
+#:import AZUL theme.AZUL
+#:import AZUL_SUAVE theme.AZUL_SUAVE
+#:import NARANJA theme.NARANJA
+#:import NARANJA_SUAVE theme.NARANJA_SUAVE
+#:import ROJO theme.ROJO
+#:import AMARILLO theme.AMARILLO
+#:import AMARILLO_SUAVE theme.AMARILLO_SUAVE
+#:import GRIS_MEDIO theme.GRIS_MEDIO
+#:import GRIS_TEXTO theme.GRIS_TEXTO
+#:import BLANCO theme.BLANCO
+#:import FONDO theme.FONDO
+#:import COLORES_BARRA theme.COLORES_BARRA
+
+<HoverIconButton>:
+    # Cuando hover_bg está definido, se usa como color base
+    md_bg_color: self.hover_bg if self.hover else (0,0,0,0)
+    # Animamos escala para hacerlo más grande
+    scale_value_x: 1.1 if self.hover else 1
+    scale_value_y: 1.1 if self.hover else 1
+
+<ItemProducto>:
+    padding: "16dp"
+    size_hint_y: None
+    height: "120dp"
+    radius: [16, ]
+    elevation: 2
+    md_bg_color: app.color_card
+    codigo_barras: ""
+
+    MDBoxLayout:
+        spacing: "16dp"
+        align: "center"
+
+        MDCard:
+            size_hint: None, None
+            size: "52dp", "52dp"
+            radius: [26, ]
+            md_bg_color: app.color_verde_suave
+            pos_hint: {"center_y": .5}
+            elevation: 0
+
+            MDIcon:
+                icon: "alert-circle-outline" if root.stock < 5 else "package-variant-closed"
+                theme_text_color: "Custom"
+                text_color: list(ROJO) if root.stock < 5 else list(VERDE_PRINCIPAL)
+                pos_hint: {"center_x": .5, "center_y": .5}
+
+        MDBoxLayout:
+            orientation: "vertical"
+            size_hint_x: 1
+            pos_hint: {"center_y": .5}
+            spacing: "4dp"
+
+            MDLabel:
+                text: root.nombre
+                font_style: "Subtitle1"
+                bold: True
+                theme_text_color: "Primary"
+                shorten: True
+                shorten_from: 'right'
+
+            MDBoxLayout:
+                spacing: "16dp"
+                MDLabel:
+                    text: "Stock: " + str(root.stock) + " (BAJO!)" if root.stock < app.stock_minimo else "Stock: " + str(root.stock)
+                    font_style: "Caption"
+                    theme_text_color: "Custom"
+                    text_color: list(ROJO) if root.stock < app.stock_minimo else list(GRIS_MEDIO)
+                    bold: root.stock < app.stock_minimo
+                MDLabel:
+                    text: "$%s" % "{:,.2f}".format(root.precio)
+                    font_style: "Caption"
+                    bold: True
+                    theme_text_color: "Custom"
+                    text_color: VERDE_PRINCIPAL
+
+            MDLabel:
+                text: "Categoría: " + root.categoria
+                font_style: "Caption"
+                theme_text_color: "Custom"
+                text_color: GRIS_TEXTO
+                font_size: "11sp"
+
+            MDLabel:
+                text: root.fecha_registro
+                font_style: "Caption"
+                theme_text_color: "Custom"
+                text_color: GRIS_MEDIO
+                font_size: "10sp"
+
+        MDBoxLayout:
+            adaptive_width: True
+            orientation: "horizontal"
+            pos_hint: {"center_y": .5}
+            spacing: "8dp"
+
+            HoverIconButton:
+                icon: "plus-circle-outline"
+                theme_text_color: "Custom"
+                text_color: VERDE_PRINCIPAL
+                hover_bg: [VERDE_PRINCIPAL[0], VERDE_PRINCIPAL[1], VERDE_PRINCIPAL[2], 0.1]
+                on_release: root.screen.agregar_stock_dialog(root)
+
+            HoverIconButton:
+                icon: "square-edit-outline"
+                theme_text_color: "Custom"
+                text_color: AZUL
+                hover_bg: [AZUL[0], AZUL[1], AZUL[2], 0.1]
+                on_release: root.screen.editar_producto_dialog(root)
+
+            HoverIconButton:
+                icon: "trash-can-outline"
+                theme_text_color: "Custom"
+                text_color: ROJO
+                hover_bg: [ROJO[0], ROJO[1], ROJO[2], 0.1]
+                on_release: root.screen.confirmar_eliminar(root)
+
+
+<ContenidoAgregarStockDialog>:
+    orientation: "vertical"
+    spacing: "16dp"
+    size_hint_y: None
+    height: "90dp"
+    padding: "8dp", "0dp"
+
+    MDTextField:
+        id: add_stock
+        hint_text: "Cantidad a agregar"
+        text: ""
+        input_filter: "int"
+        icon_left: "plus-box-outline"
+        mode: "rectangle"
+        line_color_normal: VERDE_PRINCIPAL[0], VERDE_PRINCIPAL[1], VERDE_PRINCIPAL[2], 0.5
+        line_color_focus: VERDE_PRINCIPAL
+
+
+<ContenidoEdicionDialog>:
+    orientation: "vertical"
+    spacing: "16dp"
+    size_hint_y: None
+    height: "370dp"
+    padding: "8dp", "0dp"
+
+    MDTextField:
+        id: edit_codigo_barras
+        hint_text: "Código de barras (opcional)"
+        text: root.codigo_barras
+        icon_left: "barcode-scan"
+        mode: "rectangle"
+        line_color_normal: VERDE_PRINCIPAL[0], VERDE_PRINCIPAL[1], VERDE_PRINCIPAL[2], 0.5
+        line_color_focus: VERDE_PRINCIPAL
+
+    MDTextField:
+        id: edit_nombre
+        hint_text: "Nombre del producto"
+        text: root.nombre
+        icon_left: "package-variant-closed"
+        mode: "rectangle"
+        line_color_normal: VERDE_PRINCIPAL[0], VERDE_PRINCIPAL[1], VERDE_PRINCIPAL[2], 0.5
+        line_color_focus: VERDE_PRINCIPAL
+
+    MDTextField:
+        id: edit_precio
+        hint_text: "Precio de venta"
+        text: root.precio
+        input_filter: "float"
+        icon_left: "currency-usd"
+        mode: "rectangle"
+        line_color_normal: VERDE_PRINCIPAL[0], VERDE_PRINCIPAL[1], VERDE_PRINCIPAL[2], 0.5
+        line_color_focus: VERDE_PRINCIPAL
+
+    MDTextField:
+        id: edit_stock
+        hint_text: "Stock actual"
+        text: root.stock
+        input_filter: "int"
+        icon_left: "numeric"
+        mode: "rectangle"
+        line_color_normal: VERDE_PRINCIPAL[0], VERDE_PRINCIPAL[1], VERDE_PRINCIPAL[2], 0.5
+        line_color_focus: VERDE_PRINCIPAL
+
+    MDTextField:
+        id: edit_categoria
+        hint_text: "Categoría"
+        text: root.categoria
+        icon_left: "tag-outline"
+        mode: "rectangle"
+        line_color_normal: VERDE_PRINCIPAL[0], VERDE_PRINCIPAL[1], VERDE_PRINCIPAL[2], 0.5
+        line_color_focus: VERDE_PRINCIPAL
+
+
+<ItemVenta>:
+    padding: "14dp"
+    size_hint_y: None
+    height: "76dp"
+    radius: [12, ]
+    elevation: 1
+    md_bg_color: app.color_card
+
+    MDBoxLayout:
+        spacing: "14dp"
+        align: "center"
+
+        MDCard:
+            size_hint: None, None
+            size: "40dp", "40dp"
+            radius: [20, ]
+            md_bg_color: app.color_verde_suave
+            pos_hint: {"center_y": .5}
+            elevation: 0
+
+            MDIcon:
+                icon: "cash-check"
+                theme_text_color: "Custom"
+                text_color: VERDE_PRINCIPAL
+                pos_hint: {"center_x": .5, "center_y": .5}
+
+        MDBoxLayout:
+            orientation: "vertical"
+            size_hint_x: 0.6
+            pos_hint: {"center_y": .5}
+            spacing: "2dp"
+
+            MDLabel:
+                text: root.nombre_producto
+                font_style: "Subtitle2"
+                bold: True
+
+            MDLabel:
+                text: "Cant: %d u.  |  %s" % (root.cantidad, root.fecha)
+                font_style: "Caption"
+                theme_text_color: "Secondary"
+
+        MDLabel:
+            text: "$%s" % "{:,.2f}".format(root.total)
+            font_style: "Subtitle1"
+            bold: True
+            theme_text_color: "Custom"
+            text_color: VERDE_PRINCIPAL
+            halign: "right"
+            pos_hint: {"center_y": .5}
+
+
+<BarraGrafico>:
+    orientation: 'vertical'
+    spacing: "4dp"
+
+    Widget:
+        size_hint_y: 1.0 - root.size_hint_bar
+
+    BoxLayout:
+        size_hint_y: root.size_hint_bar
+        canvas:
+            # Gradiente vertical para la barra
+            Color:
+                rgba: COLORES_BARRA[root.indice % len(COLORES_BARRA)]
+            Rectangle:
+                pos: self.pos
+                size: self.size
+            # Capa superior con brillo
+            Color:
+                rgba: [1, 1, 1, 0.15]
+            Rectangle:
+                pos: self.pos
+                size: [self.width, self.height * 0.3]
+            # Borde superior redondeado
+            Color:
+                rgba: COLORES_BARRA[root.indice % len(COLORES_BARRA)]
+            RoundedRectangle:
+                pos: self.pos
+                size: self.size
+                radius: [8, 8, 0, 0]
+
+        MDLabel:
+            text: root.valor_formateado
+            halign: 'center'
+            valign: 'middle'
+            font_style: 'Caption'
+            theme_text_color: 'Custom'
+            text_color: 1, 1, 1, 1
+            bold: True
+            font_size: "11sp"
+
+    MDLabel:
+        text: root.nombre
+        size_hint_y: None
+        height: "22dp"
+        halign: 'center'
+        font_style: 'Caption'
+        theme_text_color: 'Custom'
+        text_color: 0.3, 0.3, 0.3, 1
+        shorten: True
+        shorten_from: 'right'
+
+
+<PantallaInventario>:
+    MDBoxLayout:
+        orientation: 'vertical'
+
+        MDTopAppBar:
+            id: top_bar
+            title: app.title
+            elevation: 3
+            pos_hint: {"top": 1}
+            md_bg_color: VERDE_PRINCIPAL
+            left_action_items: [["store-outline", lambda x: None]]
+            right_action_items: [["refresh", lambda x: root.recargar_todo()], ["cog", lambda x: setattr(app.root, 'current', 'configuracion')]]
+
+        MDBottomNavigation:
+            id: bottom_nav
+            panel_color: app.color_nav_panel
+            text_color_active: VERDE_PRINCIPAL
+            text_color_normal: app.color_nav_text_norm
+            elevation: 8
+
+            MDBottomNavigationItem:
+                name: 'tab_inventario'
+                text: 'Inventario'
+                icon: 'storefront-outline'
+                on_tab_press:
+                    root.cargar_productos()
+                    root.ids.top_bar.title = app.title + " - Inventario"
+
+                MDBoxLayout:
+                    orientation: 'vertical'
+                    padding: "16dp"
+                    spacing: "16dp"
+                    md_bg_color: app.color_fondo
+
+                    MDBoxLayout:
+                        size_hint_y: None
+                        height: "90dp"
+                        spacing: "14dp"
+
+                        MDCard:
+                            padding: "14dp"
+                            radius: [14, ]
+                            elevation: 2
+                            md_bg_color: app.color_verde_suave
+
+                            MDBoxLayout:
+                                orientation: "vertical"
+                                spacing: "4dp"
+
+                                MDBoxLayout:
+                                    size_hint_y: None
+                                    height: "24dp"
+                                    MDLabel:
+                                        text: "Total Productos"
+                                        font_style: "Caption"
+                                        theme_text_color: "Custom"
+                                        text_color: GRIS_TEXTO
+                                    MDIcon:
+                                        icon: "package-variant-closed"
+                                        theme_text_color: "Custom"
+                                        text_color: VERDE_PRINCIPAL
+                                        pos_hint: {"center_y": .5}
+
+                                MDLabel:
+                                    id: label_total_productos
+                                    text: "0"
+                                    font_style: "H5"
+                                    bold: True
+                                    theme_text_color: "Custom"
+                                    text_color: VERDE_PRINCIPAL
+
+                        MDCard:
+                            padding: "14dp"
+                            radius: [14, ]
+                            elevation: 2
+                            md_bg_color: app.color_morado_suave
+
+                            MDBoxLayout:
+                                orientation: "vertical"
+                                spacing: "4dp"
+
+                                MDBoxLayout:
+                                    size_hint_y: None
+                                    height: "24dp"
+                                    MDLabel:
+                                        text: "Valor Inventario"
+                                        font_style: "Caption"
+                                        theme_text_color: "Custom"
+                                        text_color: GRIS_TEXTO
+                                    MDIcon:
+                                        icon: "currency-usd"
+                                        theme_text_color: "Custom"
+                                        text_color: MORADO
+                                        pos_hint: {"center_y": .5}
+
+                                MDLabel:
+                                    id: label_valor_total
+                                    text: ".00"
+                                    font_style: "H5"
+                                    bold: True
+                                    theme_text_color: "Custom"
+                                    text_color: MORADO
+
+                    MDTextField:
+                        id: input_busqueda
+                        hint_text: "Buscar o escanea código de barras (Enter)..."
+                        icon_left: "magnify"
+                        mode: "round"
+                        on_text: root.filtrar_productos(self.text)
+                        on_text_validate: root.buscar_por_codigo_barras(self.text)
+
+                    ScrollView:
+                        bar_width: "4dp"
+                        bar_color: VERDE_PRINCIPAL[0], VERDE_PRINCIPAL[1], VERDE_PRINCIPAL[2], 0.6
+                        bar_inactive_color: VERDE_PRINCIPAL[0], VERDE_PRINCIPAL[1], VERDE_PRINCIPAL[2], 0.15
+                        scroll_type: ['bars', 'content']
+
+                        MDGridLayout:
+                            id: lista_productos
+                            cols: 1
+                            spacing: "12dp"
+                            size_hint_y: None
+                            height: self.minimum_height
+                            padding: "2dp", "2dp", "2dp", "16dp"
+
+            MDBottomNavigationItem:
+                name: 'tab_registrar'
+                text: 'Registrar'
+                icon: 'plus-circle-outline'
+                on_tab_press:
+                    root.ids.top_bar.title = app.title + " - Registrar"
+
+                ScrollView:
+                    bar_width: "4dp"
+                    bar_color: VERDE_PRINCIPAL[0], VERDE_PRINCIPAL[1], VERDE_PRINCIPAL[2], 0.6
+                    bar_inactive_color: VERDE_PRINCIPAL[0], VERDE_PRINCIPAL[1], VERDE_PRINCIPAL[2], 0.15
+                    scroll_type: ['bars', 'content']
+
+                    MDBoxLayout:
+                        orientation: 'vertical'
+                        spacing: "24dp"
+                        padding: "24dp"
+                        size_hint_y: None
+                        height: self.minimum_height
+
+                        MDCard:
+                            orientation: "vertical"
+                            padding: "24dp"
+                            spacing: "20dp"
+                            radius: [20, ]
+                            elevation: 3
+                            size_hint_y: None
+                            height: self.minimum_height
+                            md_bg_color: app.color_card
+
+                            MDBoxLayout:
+                                orientation: "horizontal"
+                                size_hint_y: None
+                                height: "32dp"
+                                spacing: "8dp"
+
+                                MDIcon:
+                                    icon: "plus-circle"
+                                    theme_text_color: "Custom"
+                                    text_color: VERDE_PRINCIPAL
+                                    pos_hint: {"center_y": .5}
+
+                                MDLabel:
+                                    text: "Nuevo Producto"
+                                    font_style: "H6"
+                                    bold: True
+                                    theme_text_color: "Primary"
+                                    pos_hint: {"center_y": .5}
+
+                            # ── CAMPO CÓDIGO DE BARRAS (lector físico) ──
+                            MDBoxLayout:
+                                orientation: "horizontal"
+                                size_hint_y: None
+                                height: "20dp"
+                                spacing: "6dp"
+                                MDIcon:
+                                    icon: "barcode-scan"
+                                    theme_text_color: "Custom"
+                                    text_color: VERDE_PRINCIPAL
+                                    size_hint_x: None
+                                    width: "20dp"
+                                MDLabel:
+                                    text: "Escanea el código de barras primero (opcional)"
+                                    font_style: "Caption"
+                                    theme_text_color: "Custom"
+                                    text_color: GRIS_TEXTO
+
+                            MDTextField:
+                                id: input_codigo_barras
+                                hint_text: "Código de barras"
+                                helper_text: "Usa el lector físico o escríbelo manualmente"
+                                helper_text_mode: "on_focus"
+                                icon_left: "barcode"
+                                mode: "rectangle"
+                                line_color_normal: VERDE_PRINCIPAL[0], VERDE_PRINCIPAL[1], VERDE_PRINCIPAL[2], 0.5
+                                line_color_focus: VERDE_PRINCIPAL
+                                on_text_validate: root.codigo_barras_registrado(self.text)
+
+                            MDTextField:
+                                id: input_nombre
+                                hint_text: "Nombre del producto"
+                                helper_text: "Ej. Café, Azúcar, Leche"
+                                helper_text_mode: "on_focus"
+                                icon_left: "package-variant-closed"
+                                mode: "rectangle"
+                                line_color_normal: VERDE_PRINCIPAL[0], VERDE_PRINCIPAL[1], VERDE_PRINCIPAL[2], 0.5
+                                line_color_focus: VERDE_PRINCIPAL
+
+                            MDTextField:
+                                id: input_precio
+                                hint_text: "Precio de venta"
+                                helper_text: "Solo números (ej. 1500.50)"
+                                helper_text_mode: "on_focus"
+                                input_filter: "float"
+                                icon_left: "currency-usd"
+                                mode: "rectangle"
+                                line_color_normal: VERDE_PRINCIPAL[0], VERDE_PRINCIPAL[1], VERDE_PRINCIPAL[2], 0.5
+                                line_color_focus: VERDE_PRINCIPAL
+
+                            MDTextField:
+                                id: input_stock
+                                hint_text: "Stock Inicial"
+                                helper_text: "Cantidad disponible (ej. 20)"
+                                helper_text_mode: "on_focus"
+                                input_filter: "int"
+                                icon_left: "numeric"
+                                mode: "rectangle"
+                                line_color_normal: VERDE_PRINCIPAL[0], VERDE_PRINCIPAL[1], VERDE_PRINCIPAL[2], 0.5
+                                line_color_focus: VERDE_PRINCIPAL
+
+                            MDTextField:
+                                id: input_categoria
+                                hint_text: "Categoría"
+                                helper_text: "Opcional (ej. Bebidas, Aseo)"
+                                helper_text_mode: "on_focus"
+                                icon_left: "tag-outline"
+                                mode: "rectangle"
+                                line_color_normal: VERDE_PRINCIPAL[0], VERDE_PRINCIPAL[1], VERDE_PRINCIPAL[2], 0.5
+                                line_color_focus: VERDE_PRINCIPAL
+
+                            MDRaisedButton:
+                                text: "GUARDAR PRODUCTO"
+                                pos_hint: {"center_x": .5}
+                                size_hint_x: 0.9
+                                md_bg_color: VERDE_PRINCIPAL
+                                on_release: root.guardar_producto(input_nombre.text, input_precio.text, input_stock.text, input_categoria.text, input_codigo_barras.text)
+
+
+            MDBottomNavigationItem:
+                name: 'tab_ventas'
+                text: 'Ventas'
+                icon: 'cash-register'
+                on_tab_press:
+                    root.ids.top_bar.title = app.title + " - Ventas"
+
+                ScrollView:
+                    bar_width: "4dp"
+                    bar_color: VERDE_PRINCIPAL[0], VERDE_PRINCIPAL[1], VERDE_PRINCIPAL[2], 0.6
+                    bar_inactive_color: VERDE_PRINCIPAL[0], VERDE_PRINCIPAL[1], VERDE_PRINCIPAL[2], 0.15
+                    scroll_type: ['bars', 'content']
+
+                    MDBoxLayout:
+                        orientation: 'vertical'
+                        padding: "16dp"
+                        spacing: "16dp"
+                        md_bg_color: app.color_fondo
+                        size_hint_y: None
+                        height: self.minimum_height
+
+                        MDBoxLayout:
+                            size_hint_y: None
+                            height: "90dp"
+                            spacing: "14dp"
+    
+                            MDCard:
+                                padding: "14dp"
+                                radius: [14, ]
+                                elevation: 2
+                                md_bg_color: app.color_verde_suave
+    
+                                MDBoxLayout:
+                                    orientation: "vertical"
+                                    spacing: "4dp"
+    
+                                    MDBoxLayout:
+                                        size_hint_y: None
+                                        height: "24dp"
+                                        MDLabel:
+                                            text: "Total Ventas Facturado"
+                                            font_style: "Caption"
+                                            theme_text_color: "Custom"
+                                            text_color: GRIS_TEXTO
+                                        MDIcon:
+                                            icon: "cash-multiple"
+                                            theme_text_color: "Custom"
+                                            text_color: VERDE_PRINCIPAL
+                                            pos_hint: {"center_y": .5}
+    
+                                    MDLabel:
+                                        id: label_total_ventas
+                                        text: ".00"
+                                        font_style: "H5"
+                                        bold: True
+                                        theme_text_color: "Custom"
+                                        text_color: VERDE_PRINCIPAL
+    
+                        MDBoxLayout:
+                            size_hint_y: None
+                            height: "16dp"
+    
+                        MDCard:
+                            orientation: "vertical"
+                            padding: "24dp"
+                            spacing: "20dp"
+                            radius: [20, ]
+                            elevation: 2
+                            size_hint_y: None
+                            height: self.minimum_height
+                            md_bg_color: app.color_card
+    
+                            MDBoxLayout:
+                                orientation: "horizontal"
+                                size_hint_y: None
+                                height: "28dp"
+                                spacing: "8dp"
+    
+                                MDIcon:
+                                    icon: "cart-plus"
+                                    theme_text_color: "Custom"
+                                    text_color: VERDE_PRINCIPAL
+                                    pos_hint: {"center_y": .5}
+    
+                                MDLabel:
+                                    text: "Registrar Venta"
+                                    font_style: "Subtitle1"
+                                    bold: True
+                                    theme_text_color: "Primary"
+                                    pos_hint: {"center_y": .5}
+    
+                            # ── LECTOR FÍSICO EN VENTAS ──
+                            MDBoxLayout:
+                                orientation: "horizontal"
+                                size_hint_y: None
+                                height: "20dp"
+                                spacing: "6dp"
+                                MDIcon:
+                                    icon: "barcode-scan"
+                                    theme_text_color: "Custom"
+                                    text_color: VERDE_PRINCIPAL
+                                    size_hint_x: None
+                                    width: "20dp"
+                                MDLabel:
+                                    text: "Escanea para seleccionar producto automáticamente"
+                                    font_style: "Caption"
+                                    theme_text_color: "Custom"
+                                    text_color: GRIS_TEXTO
+    
+                            MDTextField:
+                                id: input_codigo_venta
+                                hint_text: "Escanea código de barras aquí"
+                                helper_text: "El lector completará automáticamente el producto"
+                                helper_text_mode: "on_focus"
+                                icon_left: "barcode-scan"
+                                mode: "rectangle"
+                                line_color_normal: VERDE_PRINCIPAL[0], VERDE_PRINCIPAL[1], VERDE_PRINCIPAL[2], 0.5
+                                line_color_focus: VERDE_PRINCIPAL
+                                on_text_validate: root.codigo_barras_venta(self.text)
+    
+                            MDBoxLayout:
+                                size_hint_y: None
+                                height: "8dp"
+    
+                            MDTextField:
+                                id: input_producto_venta
+                                hint_text: "O toca para seleccionar producto del menú"
+                                icon_left: "store-outline"
+                                mode: "rectangle"
+                                line_color_normal: VERDE_PRINCIPAL[0], VERDE_PRINCIPAL[1], VERDE_PRINCIPAL[2], 0.5
+                                line_color_focus: VERDE_PRINCIPAL
+                                on_focus: if self.focus: root.abrir_menu_productos(self)
+    
+                            MDBoxLayout:
+                                size_hint_y: None
+                                height: "8dp"
+    
+                            MDLabel:
+                                id: label_precio_unitario
+                                text: "Selecciona un producto..."
+                                font_style: "Caption"
+                                theme_text_color: "Custom"
+                                text_color: GRIS_TEXTO
+    
+                            MDBoxLayout:
+                                size_hint_y: None
+                                height: "8dp"
+    
+                            MDTextField:
+                                id: input_cantidad_venta
+                                hint_text: "Cantidad a vender"
+                                input_filter: "int"
+                                icon_left: "numeric"
+                                mode: "rectangle"
+                                line_color_normal: VERDE_PRINCIPAL[0], VERDE_PRINCIPAL[1], VERDE_PRINCIPAL[2], 0.5
+                                line_color_focus: VERDE_PRINCIPAL
+                                on_text_validate: root.registrar_venta(self.text)
+    
+                            MDBoxLayout:
+                                orientation: "horizontal"
+                                size_hint_y: None
+                                height: "20dp"
+                                spacing: "6dp"
+                                MDIcon:
+                                    icon: "cash"
+                                    theme_text_color: "Custom"
+                                    text_color: VERDE_PRINCIPAL
+                                    size_hint_x: None
+                                    width: "20dp"
+                                MDLabel:
+                                    text: "Método de pago"
+                                    font_style: "Caption"
+                                    theme_text_color: "Custom"
+                                    text_color: GRIS_TEXTO
+    
+                            MDTextField:
+                                id: input_metodo_pago
+                                hint_text: "Método de pago (Efectivo, Nequi, u otro)"
+                                icon_left: "cash"
+                                mode: "rectangle"
+                                line_color_normal: VERDE_PRINCIPAL[0], VERDE_PRINCIPAL[1], VERDE_PRINCIPAL[2], 0.5
+                                line_color_focus: VERDE_PRINCIPAL
+                                text: "Efectivo"
+    
+                            MDBoxLayout:
+                                size_hint_y: None
+                                height: "8dp"
+    
+                            MDRaisedButton:
+                                text: "REGISTRAR VENTA"
+                                pos_hint: {"center_x": .5}
+                                size_hint_x: 0.9
+                                md_bg_color: VERDE_PRINCIPAL
+                                on_release: root.registrar_venta(input_cantidad_venta.text)
+    
+                        MDBoxLayout:
+                            orientation: "horizontal"
+                            size_hint_y: None
+                            height: "40dp"
+                            spacing: "8dp"
+                            padding: "0dp", "4dp", "0dp", "0dp"
+    
+                            MDLabel:
+                                text: "Historial de Ventas"
+                                font_style: "Subtitle2"
+                                bold: True
+                                theme_text_color: "Secondary"
+                                pos_hint: {"center_y": .5}
+    
+                            Widget:
+    
+                            MDRaisedButton:
+                                text: "CSV"
+                                size_hint_x: None
+                                width: "56dp"
+                                md_bg_color: GRIS_MEDIO
+                                on_release: root.exportar_ventas_csv()
+    
+                            MDRaisedButton:
+                                text: "XLS"
+                                size_hint_x: None
+                                width: "56dp"
+                                md_bg_color: VERDE_PRINCIPAL
+                                on_release: root.exportar_ventas_excel()
+    
+                            MDRaisedButton:
+                                text: "PDF"
+                                size_hint_x: None
+                                width: "56dp"
+                                md_bg_color: ROJO
+                                on_release: root.exportar_ventas_pdf()
+    
+                        MDGridLayout:
+                            id: lista_ventas
+                            cols: 1
+                            spacing: "10dp"
+                            size_hint_y: None
+                            height: self.minimum_height
+                            padding: "2dp", "2dp", "2dp", "12dp"
+    
+
+            MDBottomNavigationItem:
+                name: 'tab_reportes'
+                text: 'Reportes'
+                icon: 'chart-line'
+                on_tab_press:
+                    root.cargar_reportes()
+                    root.ids.top_bar.title = app.title + " - Reportes"
+
+                ScrollView:
+                    bar_width: "4dp"
+                    bar_color: VERDE_PRINCIPAL[0], VERDE_PRINCIPAL[1], VERDE_PRINCIPAL[2], 0.6
+                    bar_inactive_color: VERDE_PRINCIPAL[0], VERDE_PRINCIPAL[1], VERDE_PRINCIPAL[2], 0.15
+                    scroll_type: ['bars', 'content']
+
+                    MDBoxLayout:
+                        orientation: 'vertical'
+                        padding: "16dp"
+                        spacing: "20dp"
+                        size_hint_y: None
+                        height: self.minimum_height
+
+                        MDBoxLayout:
+                            orientation: "horizontal"
+                            size_hint_y: None
+                            height: "44dp"
+                            spacing: "8dp"
+
+                            MDLabel:
+                                text: "Rendimiento"
+                                font_style: "H6"
+                                bold: True
+                                theme_text_color: "Primary"
+                                pos_hint: {"center_y": .5}
+
+                            Widget:
+
+                            MDRaisedButton:
+                                text: "CSV"
+                                size_hint_x: None
+                                width: "56dp"
+                                md_bg_color: GRIS_MEDIO
+                                on_release: root.exportar_inventario_csv()
+
+                            MDRaisedButton:
+                                text: "XLS"
+                                size_hint_x: None
+                                width: "56dp"
+                                md_bg_color: VERDE_PRINCIPAL
+                                on_release: root.exportar_inventario_excel()
+
+                            MDRaisedButton:
+                                text: "PDF"
+                                size_hint_x: None
+                                width: "56dp"
+                                md_bg_color: ROJO
+                                on_release: root.exportar_inventario_pdf()
+
+                        MDCard:
+                            padding: "16dp"
+                            radius: [14, ]
+                            elevation: 2
+                            md_bg_color: AMARILLO_SUAVE
+                            size_hint_y: None
+                            height: "76dp"
+
+                            MDBoxLayout:
+                                orientation: "horizontal"
+                                spacing: "14dp"
+
+                                MDCard:
+                                    size_hint: None, None
+                                    size: "44dp", "44dp"
+                                    radius: [22, ]
+                                    md_bg_color: 1, 0.85, 0.2, 0.3
+                                    pos_hint: {"center_y": .5}
+                                    elevation: 0
+
+                                    MDIcon:
+                                        icon: "star"
+                                        theme_text_color: "Custom"
+                                        text_color: AMARILLO
+                                        pos_hint: {"center_x": .5, "center_y": .5}
+
+                                MDBoxLayout:
+                                    orientation: "vertical"
+                                    pos_hint: {"center_y": .5}
+
+                                    MDLabel:
+                                        text: "Producto Más Vendido"
+                                        font_style: "Caption"
+                                        theme_text_color: "Custom"
+                                        text_color: GRIS_TEXTO
+
+                                    MDLabel:
+                                        id: label_producto_estrella
+                                        text: "Calculando..."
+                                        font_style: "Subtitle1"
+                                        bold: True
+                                        theme_text_color: "Primary"
+                                        on_touch_down: if args[1].is_double_tap: root.mostrar_productos_mas_vendidos()
+
+                        MDGridLayout:
+                            cols: 2
+                            spacing: "14dp"
+                            size_hint_y: None
+                            height: "200dp"
+
+                            MDCard:
+                                padding: "14dp"
+                                radius: [14, ]
+                                elevation: 2
+                                md_bg_color: app.color_verde_suave
+
+                                MDBoxLayout:
+                                    orientation: "vertical"
+                                    spacing: "6dp"
+
+                                    MDBoxLayout:
+                                        size_hint_y: None
+                                        height: "20dp"
+                                        MDLabel:
+                                            text: "Ingresos Totales"
+                                            font_style: "Caption"
+                                            theme_text_color: "Custom"
+                                            text_color: GRIS_TEXTO
+                                        MDIcon:
+                                            icon: "trending-up"
+                                            theme_text_color: "Custom"
+                                            text_color: VERDE_PRINCIPAL
+
+                                    MDLabel:
+                                        id: label_reportes_ingresos
+                                        text: ".00"
+                                        font_style: "Subtitle1"
+                                        bold: True
+                                        theme_text_color: "Custom"
+                                        text_color: VERDE_PRINCIPAL
+
+                            MDCard:
+                                padding: "14dp"
+                                radius: [14, ]
+                                elevation: 2
+                                md_bg_color: app.color_morado_suave
+
+                                MDBoxLayout:
+                                    orientation: "vertical"
+                                    spacing: "6dp"
+
+                                    MDBoxLayout:
+                                        size_hint_y: None
+                                        height: "20dp"
+                                        MDLabel:
+                                            text: "Ganancia Est. (35%)"
+                                            font_style: "Caption"
+                                            theme_text_color: "Custom"
+                                            text_color: GRIS_TEXTO
+                                        MDIcon:
+                                            icon: "chart-arc"
+                                            theme_text_color: "Custom"
+                                            text_color: MORADO
+
+                                    MDLabel:
+                                        id: label_reportes_ganancias
+                                        text: ".00"
+                                        font_style: "Subtitle1"
+                                        bold: True
+                                        theme_text_color: "Custom"
+                                        text_color: MORADO
+
+                            MDCard:
+                                padding: "14dp"
+                                radius: [14, ]
+                                elevation: 2
+                                md_bg_color: app.color_azul_suave
+
+                                MDBoxLayout:
+                                    orientation: "vertical"
+                                    spacing: "6dp"
+
+                                    MDBoxLayout:
+                                        size_hint_y: None
+                                        height: "20dp"
+                                        MDLabel:
+                                            text: "Unidades Vendidas"
+                                            font_style: "Caption"
+                                            theme_text_color: "Custom"
+                                            text_color: GRIS_TEXTO
+                                        MDIcon:
+                                            icon: "package-variant"
+                                            theme_text_color: "Custom"
+                                            text_color: AZUL
+
+                                    MDLabel:
+                                        id: label_reportes_unidades
+                                        text: "0"
+                                        font_style: "Subtitle1"
+                                        bold: True
+                                        theme_text_color: "Custom"
+                                        text_color: AZUL
+
+                            MDCard:
+                                padding: "14dp"
+                                radius: [14, ]
+                                elevation: 2
+                                md_bg_color: app.color_naranja_suave
+
+                                MDBoxLayout:
+                                    orientation: "vertical"
+                                    spacing: "6dp"
+
+                                    MDBoxLayout:
+                                        size_hint_y: None
+                                        height: "20dp"
+                                        MDLabel:
+                                            text: "Transacciones"
+                                            font_style: "Caption"
+                                            theme_text_color: "Custom"
+                                            text_color: GRIS_TEXTO
+                                        MDIcon:
+                                            icon: "counter"
+                                            theme_text_color: "Custom"
+                                            text_color: NARANJA
+
+                                    MDLabel:
+                                        id: label_reportes_transacciones
+                                        text: "0"
+                                        font_style: "Subtitle1"
+                                        bold: True
+                                        theme_text_color: "Custom"
+                                        text_color: NARANJA
+
+                        MDBoxLayout:
+                            orientation: "horizontal"
+                            size_hint_y: None
+                            height: "28dp"
+                            spacing: "8dp"
+
+                            MDIcon:
+                                icon: "chart-bar"
+                                theme_text_color: "Custom"
+                                text_color: VERDE_PRINCIPAL
+                                pos_hint: {"center_y": .5}
+
+                            MDLabel:
+                                text: "Ventas por Producto (Top 5)"
+                                font_style: "Subtitle1"
+                                bold: True
+                                theme_text_color: "Primary"
+                                pos_hint: {"center_y": .5}
+
+                        MDCard:
+                            padding: "16dp"
+                            radius: [16, ]
+                            elevation: 2
+                            size_hint_y: None
+                            height: "280dp"
+                            md_bg_color: app.color_card
+
+                            MDBoxLayout:
+                                id: contenedor_grafico
+                                orientation: "horizontal"
+                                spacing: "16dp"
+
+                        MDBoxLayout:
+                            orientation: "horizontal"
+                            size_hint_y: None
+                            height: "28dp"
+                            spacing: "8dp"
+
+                            MDIcon:
+                                icon: "chart-pie"
+                                theme_text_color: "Custom"
+                                text_color: MORADO
+                                pos_hint: {"center_y": .5}
+
+                            MDLabel:
+                                text: "Ventas por Categoría (Top 5)"
+                                font_style: "Subtitle1"
+                                bold: True
+                                theme_text_color: "Primary"
+                                pos_hint: {"center_y": .5}
+
+                        MDCard:
+                            padding: "16dp"
+                            radius: [16, ]
+                            elevation: 2
+                            size_hint_y: None
+                            height: "280dp"
+                            md_bg_color: app.color_card
+
+                            MDBoxLayout:
+                                id: contenedor_grafico_categorias
+                                orientation: "horizontal"
+                                spacing: "16dp"
+
+                        MDBoxLayout:
+                            orientation: "horizontal"
+                            size_hint_y: None
+                            height: "28dp"
+                            spacing: "8dp"
+
+                            MDIcon:
+                                icon: "chart-timeline-variant"
+                                theme_text_color: "Custom"
+                                text_color: AZUL
+                                pos_hint: {"center_y": .5}
+
+                            MDLabel:
+                                text: "Tendencia de Ventas (Últimas 24 Horas)"
+                                font_style: "Subtitle1"
+                                bold: True
+                                theme_text_color: "Primary"
+                                pos_hint: {"center_y": .5}
+
+                        MDCard:
+                            padding: "16dp"
+                            radius: [16, ]
+                            elevation: 2
+                            size_hint_y: None
+                            height: "260dp"
+                            md_bg_color: app.color_card
+
+                            GraficoLineas:
+                                id: grafico_lineas
+                                size_hint_y: 1
+
+
+
+
+
+<PantallaConfiguracion>:
+    MDBoxLayout:
+        orientation: 'vertical'
+        
+        MDTopAppBar:
+            title: 'Configuración'
+            elevation: 3
+            pos_hint: {'top': 1}
+            md_bg_color: VERDE_PRINCIPAL
+            left_action_items: [['arrow-left', lambda x: setattr(app.root, 'current', 'inventario')]]
+
+        ScrollView:
+            MDBoxLayout:
+                orientation: 'vertical'
+                padding: '24dp'
+                spacing: '24dp'
+                size_hint_y: None
+                height: self.minimum_height
+
+                MDLabel:
+                    text: 'Perfil del Negocio'
+                    font_style: 'H6'
+                    theme_text_color: 'Primary'
+
+                MDCard:
+                    orientation: 'vertical'
+                    padding: '16dp'
+                    spacing: '16dp'
+                    size_hint_y: None
+                    height: self.minimum_height
+                    elevation: 2
+                    
+                    MDTextField:
+                        id: input_nombre_negocio
+                        hint_text: 'Nombre del Negocio'
+                        icon_left: 'store'
+                    MDTextField:
+                        id: input_nit
+                        hint_text: 'NIT/RUT'
+                        icon_left: 'card-account-details'
+                    MDTextField:
+                        id: input_telefono
+                        hint_text: 'Teléfono'
+                        icon_left: 'phone'
+                    MDTextField:
+                        id: input_direccion
+                        hint_text: 'Dirección'
+                        icon_left: 'map-marker'
+
+                MDLabel:
+                    text: 'Parámetros del Sistema'
+                    font_style: 'H6'
+                    theme_text_color: 'Primary'
+
+                MDCard:
+                    orientation: 'vertical'
+                    padding: '16dp'
+                    spacing: '16dp'
+                    size_hint_y: None
+                    height: self.minimum_height
+                    elevation: 2
+                    
+                    MDTextField:
+                        id: input_margen
+                        hint_text: 'Margen de Ganancia (%)'
+                        icon_left: 'percent'
+                        input_filter: 'float'
+                    MDTextField:
+                        id: input_stock_minimo
+                        hint_text: 'Alerta de Stock Mínimo'
+                        icon_left: 'alert'
+                        input_filter: 'int'
+
+                MDLabel:
+                    text: 'Herramientas'
+                    font_style: 'H6'
+                    theme_text_color: 'Primary'
+
+                MDCard:
+                    orientation: 'vertical'
+                    padding: '16dp'
+                    spacing: '16dp'
+                    size_hint_y: None
+                    height: self.minimum_height
+                    elevation: 2
+                    
+                    MDBoxLayout:
+                        orientation: 'horizontal'
+                        size_hint_y: None
+                        height: '48dp'
+                        MDLabel:
+                            text: 'Modo Oscuro'
+                            theme_text_color: 'Primary'
+                        MDSwitch:
+                            id: switch_tema
+                            pos_hint: {'center_y': .5}
+                            on_active: root.cambiar_tema(*args)
+
+                    MDRaisedButton:
+                        text: 'CREAR RESPALDO DE SEGURIDAD'
+                        md_bg_color: AZUL
+                        on_release: root.crear_respaldo()
+                        size_hint_x: 1
+
+                MDRaisedButton:
+                    text: 'GUARDAR CONFIGURACIÓN'
+                    md_bg_color: VERDE_PRINCIPAL
+                    pos_hint: {'center_x': 0.5}
+                    size_hint_x: 0.9
+                    on_release: root.guardar_configuracion()

@@ -1,0 +1,26 @@
+# Entornos virtuales
+.venv/
+venv/
+env/
+
+# Caché de Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Bases de datos y archivos temporales
+*.db
+*.db-journal
+*.sqlite3
+data/*.db
+
+# Logs y configuraciones de IDE
+*.log
+.vscode/
+.idea/
+.DS_Store
+
+# Archivos exportados o reportes generados por la app
+*.pdf
+*.csv
+*.xlsx
