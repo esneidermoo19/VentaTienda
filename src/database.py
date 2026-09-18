@@ -1,8 +1,20 @@
 import sqlite3
+import sys
 from datetime import datetime
 
 import os
-DB_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "ventatienda_datos.db")
+
+if getattr(sys, 'frozen', False):
+    # Ejecutándose como .exe compilado: la BD va junto al ejecutable
+    _BASE_DIR = os.path.dirname(sys.executable)
+else:
+    # Desarrollo normal: subir un nivel desde src/ hasta la raíz del proyecto
+    _BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+DB_PATH = os.path.join(_BASE_DIR, "data", "ventatienda_datos.db")
+
+# Asegurar que el directorio data/ exista
+os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
 
 
 def _conectar():

@@ -24,3 +24,7 @@ data/*.db
 *.pdf
 *.csv
 *.xlsx
+
+# Salidas de PyInstaller
+build/
+dist/

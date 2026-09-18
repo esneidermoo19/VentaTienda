@@ -616,7 +616,7 @@
                         MDCard:
                             orientation: "vertical"
                             padding: "24dp"
-                            spacing: "20dp"
+                            spacing: "12dp"
                             radius: [20, ]
                             elevation: 2
                             size_hint_y: None
@@ -671,10 +671,6 @@
                                 line_color_focus: VERDE_PRINCIPAL
                                 on_text_validate: root.codigo_barras_venta(self.text)
     
-                            MDBoxLayout:
-                                size_hint_y: None
-                                height: "8dp"
-    
                             MDTextField:
                                 id: input_producto_venta
                                 hint_text: "O toca para seleccionar producto del menú"
@@ -684,20 +680,14 @@
                                 line_color_focus: VERDE_PRINCIPAL
                                 on_focus: if self.focus: root.abrir_menu_productos(self)
     
-                            MDBoxLayout:
-                                size_hint_y: None
-                                height: "8dp"
-    
                             MDLabel:
                                 id: label_precio_unitario
                                 text: "Selecciona un producto..."
                                 font_style: "Caption"
                                 theme_text_color: "Custom"
                                 text_color: GRIS_TEXTO
-    
-                            MDBoxLayout:
                                 size_hint_y: None
-                                height: "8dp"
+                                height: "20dp"
     
                             MDTextField:
                                 id: input_cantidad_venta
@@ -734,10 +724,6 @@
                                 line_color_normal: VERDE_PRINCIPAL[0], VERDE_PRINCIPAL[1], VERDE_PRINCIPAL[2], 0.5
                                 line_color_focus: VERDE_PRINCIPAL
                                 text: "Efectivo"
-    
-                            MDBoxLayout:
-                                size_hint_y: None
-                                height: "8dp"
     
                             MDRaisedButton:
                                 text: "REGISTRAR VENTA"
@@ -1141,80 +1127,149 @@
                 size_hint_y: None
                 height: self.minimum_height
 
-                MDLabel:
-                    text: 'Perfil del Negocio'
-                    font_style: 'H6'
-                    theme_text_color: 'Primary'
+                MDBoxLayout:
+                    orientation: 'horizontal'
+                    size_hint_y: None
+                    height: "32dp"
+                    spacing: "8dp"
+                    MDIcon:
+                        icon: "store-cog"
+                        theme_text_color: "Custom"
+                        text_color: VERDE_PRINCIPAL
+                        pos_hint: {"center_y": .5}
+                    MDLabel:
+                        text: 'Perfil del Negocio'
+                        font_style: 'H6'
+                        bold: True
+                        theme_text_color: 'Primary'
+                        pos_hint: {"center_y": .5}
 
                 MDCard:
                     orientation: 'vertical'
-                    padding: '16dp'
+                    padding: '24dp'
                     spacing: '16dp'
                     size_hint_y: None
                     height: self.minimum_height
                     elevation: 2
+                    radius: [20, ]
+                    md_bg_color: app.color_card
                     
                     MDTextField:
                         id: input_nombre_negocio
                         hint_text: 'Nombre del Negocio'
                         icon_left: 'store'
+                        mode: "rectangle"
+                        line_color_normal: VERDE_PRINCIPAL[0], VERDE_PRINCIPAL[1], VERDE_PRINCIPAL[2], 0.5
+                        line_color_focus: VERDE_PRINCIPAL
                     MDTextField:
                         id: input_nit
                         hint_text: 'NIT/RUT'
                         icon_left: 'card-account-details'
+                        mode: "rectangle"
+                        line_color_normal: VERDE_PRINCIPAL[0], VERDE_PRINCIPAL[1], VERDE_PRINCIPAL[2], 0.5
+                        line_color_focus: VERDE_PRINCIPAL
                     MDTextField:
                         id: input_telefono
                         hint_text: 'Teléfono'
                         icon_left: 'phone'
+                        mode: "rectangle"
+                        line_color_normal: VERDE_PRINCIPAL[0], VERDE_PRINCIPAL[1], VERDE_PRINCIPAL[2], 0.5
+                        line_color_focus: VERDE_PRINCIPAL
                     MDTextField:
                         id: input_direccion
                         hint_text: 'Dirección'
                         icon_left: 'map-marker'
+                        mode: "rectangle"
+                        line_color_normal: VERDE_PRINCIPAL[0], VERDE_PRINCIPAL[1], VERDE_PRINCIPAL[2], 0.5
+                        line_color_focus: VERDE_PRINCIPAL
 
-                MDLabel:
-                    text: 'Parámetros del Sistema'
-                    font_style: 'H6'
-                    theme_text_color: 'Primary'
+                MDBoxLayout:
+                    orientation: 'horizontal'
+                    size_hint_y: None
+                    height: "32dp"
+                    spacing: "8dp"
+                    MDIcon:
+                        icon: "tune-variant"
+                        theme_text_color: "Custom"
+                        text_color: VERDE_PRINCIPAL
+                        pos_hint: {"center_y": .5}
+                    MDLabel:
+                        text: 'Parámetros del Sistema'
+                        font_style: 'H6'
+                        bold: True
+                        theme_text_color: 'Primary'
+                        pos_hint: {"center_y": .5}
 
                 MDCard:
                     orientation: 'vertical'
-                    padding: '16dp'
+                    padding: '24dp'
                     spacing: '16dp'
                     size_hint_y: None
                     height: self.minimum_height
                     elevation: 2
+                    radius: [20, ]
+                    md_bg_color: app.color_card
                     
                     MDTextField:
                         id: input_margen
                         hint_text: 'Margen de Ganancia (%)'
                         icon_left: 'percent'
                         input_filter: 'float'
+                        mode: "rectangle"
+                        line_color_normal: VERDE_PRINCIPAL[0], VERDE_PRINCIPAL[1], VERDE_PRINCIPAL[2], 0.5
+                        line_color_focus: VERDE_PRINCIPAL
                     MDTextField:
                         id: input_stock_minimo
                         hint_text: 'Alerta de Stock Mínimo'
                         icon_left: 'alert'
                         input_filter: 'int'
+                        mode: "rectangle"
+                        line_color_normal: VERDE_PRINCIPAL[0], VERDE_PRINCIPAL[1], VERDE_PRINCIPAL[2], 0.5
+                        line_color_focus: VERDE_PRINCIPAL
 
-                MDLabel:
-                    text: 'Herramientas'
-                    font_style: 'H6'
-                    theme_text_color: 'Primary'
+                MDBoxLayout:
+                    orientation: 'horizontal'
+                    size_hint_y: None
+                    height: "32dp"
+                    spacing: "8dp"
+                    MDIcon:
+                        icon: "toolbox-outline"
+                        theme_text_color: "Custom"
+                        text_color: VERDE_PRINCIPAL
+                        pos_hint: {"center_y": .5}
+                    MDLabel:
+                        text: 'Herramientas'
+                        font_style: 'H6'
+                        bold: True
+                        theme_text_color: 'Primary'
+                        pos_hint: {"center_y": .5}
 
                 MDCard:
                     orientation: 'vertical'
-                    padding: '16dp'
+                    padding: '24dp'
                     spacing: '16dp'
                     size_hint_y: None
                     height: self.minimum_height
                     elevation: 2
+                    radius: [20, ]
+                    md_bg_color: app.color_card
                     
                     MDBoxLayout:
                         orientation: 'horizontal'
                         size_hint_y: None
                         height: '48dp'
+                        MDIcon:
+                            icon: "theme-light-dark"
+                            theme_text_color: "Custom"
+                            text_color: GRIS_TEXTO
+                            pos_hint: {'center_y': .5}
+                        MDBoxLayout:
+                            size_hint_x: None
+                            width: "16dp"
                         MDLabel:
                             text: 'Modo Oscuro'
                             theme_text_color: 'Primary'
+                            pos_hint: {'center_y': .5}
                         MDSwitch:
                             id: switch_tema
                             pos_hint: {'center_y': .5}
@@ -1225,10 +1280,23 @@
                         md_bg_color: AZUL
                         on_release: root.crear_respaldo()
                         size_hint_x: 1
+                        elevation: 2
+
+                MDBoxLayout:
+                    size_hint_y: None
+                    height: "16dp"
 
                 MDRaisedButton:
                     text: 'GUARDAR CONFIGURACIÓN'
                     md_bg_color: VERDE_PRINCIPAL
                     pos_hint: {'center_x': 0.5}
                     size_hint_x: 0.9
+                    size_hint_y: None
+                    height: "56dp"
+                    font_size: "18sp"
+                    elevation: 3
                     on_release: root.guardar_configuracion()
+
+                MDBoxLayout:
+                    size_hint_y: None
+                    height: "32dp"
